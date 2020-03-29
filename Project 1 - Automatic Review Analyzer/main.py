@@ -6,9 +6,9 @@ import numpy as np
 # Data loading
 #-------------------------------------------------------------------------------
 
-train_data = utils.load_data('reviews_train.tsv')
-val_data = utils.load_data('reviews_val.tsv')
-test_data = utils.load_data('reviews_test.tsv')
+train_data = utils.load_data('data/reviews_train.tsv')
+val_data = utils.load_data('data/reviews_val.tsv')
+test_data = utils.load_data('data/reviews_test.tsv')
 
 train_texts, train_labels = zip(*((sample['text'], sample['sentiment']) for sample in train_data))
 val_texts, val_labels = zip(*((sample['text'], sample['sentiment']) for sample in val_data))
@@ -24,7 +24,7 @@ test_bow_features = p1.extract_bow_feature_vectors(test_texts, dictionary)
 # Problem 5
 #-------------------------------------------------------------------------------
 
-toy_features, toy_labels = toy_data = utils.load_toy_data('toy_data.tsv')
+toy_features, toy_labels = toy_data = utils.load_toy_data('data/toy_data.tsv')
 
 T = 10
 L = 0.2
@@ -70,7 +70,7 @@ print("{:50} {:.4f}".format("Validation accuracy for Pegasos:", avg_peg_val_accu
 
 data = (train_bow_features, train_labels, val_bow_features, val_labels)
 
-values of T and lambda to try
+# values of T and lambda to try
 Ts = [1, 5, 10, 15, 25, 50]
 Ls = [0.001, 0.01, 0.1, 1, 10]
 
@@ -82,7 +82,7 @@ avg_pct_tune_results = utils.tune_avg_perceptron(Ts, *data)
 print('avg perceptron valid:', list(zip(Ts, avg_pct_tune_results[1])))
 print('best = {:.4f}, T={:.4f}'.format(np.max(avg_pct_tune_results[1]), Ts[np.argmax(avg_pct_tune_results[1])]))
 
-fix values for L and T while tuning Pegasos T and L, respective
+# fix values for L and T while tuning Pegasos T and L, respective
 fix_L = 0.01
 peg_tune_results_T = utils.tune_pegasos_T(fix_L, Ts, *data)
 print('Pegasos valid: tune T', list(zip(Ts, peg_tune_results_T[1])))
@@ -135,7 +135,7 @@ print(sorted_word_features[-10:])
 # Problem 9
 #-------------------------------------------------------------------------------
 
-stopwords = utils.load_text_data('stopwords.txt')
+stopwords = utils.load_text_data('data/stopwords.txt')
 bow_ex_stp = p1.bag_of_words(train_texts, stopwords)
 train_bow_features_ex_stopwords = p1.extract_bow_feature_vectors(train_texts, bow_ex_stp)
 test_bow_features_ex_stopwords = p1.extract_bow_feature_vectors(test_texts, bow_ex_stp)

@@ -51,41 +51,59 @@ class NeuralNetwork():
         self.testing_points = [(1,1), (2,2), (3,3), (5,5), (10,10)]
 
     def train(self, x1, x2, y):
+        v_rectified_linear_unit = np.vectorize(rectified_linear_unit)
+        v_output_layer_activation = np.vectorize(output_layer_activation)
 
         ### Forward propagation ###
-        input_values = np.matrix([[x1],[x2]]) # 2 by 1
+        self_input_to_hidden_weights = np.array(self.input_to_hidden_weights).astype('float64')
+        self_hidden_to_output_weights = np.array(self.hidden_to_output_weights).astype('float64')
+        self_biases = np.array(self.biases).astype('float64')
+
+        input_values = np.array([[x1], [x2]]).astype('float64') # 2 by 1
 
         # Calculate the input and activation of the hidden layer
-        hidden_layer_weighted_input = # TODO (3 by 1 matrix)
-        hidden_layer_activation = # TODO (3 by 1 matrix)
+        hidden_layer_weighted_input = np.dot(input_values.T, self_input_to_hidden_weights.T).T + self_biases # 3 by 1
+        hidden_layer_activation = v_rectified_linear_unit(hidden_layer_weighted_input) # 3 by 1
 
-        output =  # TODO
-        activated_output = # TODO
+        output = np.dot(hidden_layer_activation.T, self_hidden_to_output_weights.T).T # 1 by 1
+        activated_output = v_output_layer_activation(output) # 1 by 1
 
         ### Backpropagation ###
+        v_output_layer_activation_derivative = np.vectorize(output_layer_activation_derivative)
+        v_rectified_linear_unit_derivative = np.vectorize(rectified_linear_unit_derivative)
 
         # Compute gradients
-        output_layer_error = # TODO
-        hidden_layer_error = # TODO (3 by 1 matrix)
+        output_layer_error = (y - activated_output) * v_output_layer_activation_derivative(output) # 1 by 1
+        hidden_layer_error = np.dot(output_layer_error, self_hidden_to_output_weights).T * v_rectified_linear_unit_derivative(hidden_layer_weighted_input) # 3 by 1
 
-        bias_gradients = # TODO
-        hidden_to_output_weight_gradients = # TODO
-        input_to_hidden_weight_gradients = # TODO
+        bias_gradients = hidden_layer_error
+        hidden_to_output_weight_gradients = (output_layer_error * hidden_layer_activation.T) # 1 by 3
+        input_to_hidden_weight_gradients = (hidden_layer_error * input_values.T) # 3 by 2
 
         # Use gradients to adjust weights and biases using gradient descent
-        self.biases = # TODO
-        self.input_to_hidden_weights = # TODO
-        self.hidden_to_output_weights = # TODO
+        new_biases = self_biases + self.learning_rate * bias_gradients
+        new_input_to_hidden_weights = self_input_to_hidden_weights + self.learning_rate * input_to_hidden_weight_gradients
+        new_hidden_to_output_weights = self_hidden_to_output_weights + self.learning_rate * hidden_to_output_weight_gradients
+
+        self.biases = np.matrix(new_biases)
+        self.input_to_hidden_weights = np.matrix(new_input_to_hidden_weights)
+        self.hidden_to_output_weights = np.matrix(new_hidden_to_output_weights)
 
     def predict(self, x1, x2):
+        v_rectified_linear_unit = np.vectorize(rectified_linear_unit)
+        v_output_layer_activation = np.vectorize(output_layer_activation)
 
-        input_values = np.matrix([[x1],[x2]])
+        self_input_to_hidden_weights = np.array(self.input_to_hidden_weights).astype('float64')
+        self_hidden_to_output_weights = np.array(self.hidden_to_output_weights).astype('float64')
+        self_biases = np.array(self.biases).astype('float64')
+
+        input_values = np.array([[x1], [x2]]).astype('float64')  # 2 by 1
 
         # Compute output for a single input(should be same as the forward propagation in training)
-        hidden_layer_weighted_input = # TODO
-        hidden_layer_activation = # TODO
-        output = # TODO
-        activated_output = # TODO
+        hidden_layer_weighted_input = np.dot(input_values.T, self_input_to_hidden_weights.T).T + self_biases # 3 by 1
+        hidden_layer_activation = v_rectified_linear_unit(hidden_layer_weighted_input) # 3 by 1
+        output = np.dot(hidden_layer_activation.T, self_hidden_to_output_weights.T).T # 1 by 1
+        activated_output = v_output_layer_activation(output) # 1 by 1
 
         return activated_output.item()
 
@@ -112,4 +130,4 @@ x = NeuralNetwork()
 x.train_neural_network()
 
 # UNCOMMENT THE LINE BELOW TO TEST YOUR NEURAL NETWORK
-# x.test_neural_network()
+x.test_neural_network()

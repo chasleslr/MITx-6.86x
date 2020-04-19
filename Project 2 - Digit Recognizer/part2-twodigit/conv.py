@@ -10,7 +10,6 @@ use_mini_dataset = True
 batch_size = 64
 nb_classes = 10
 nb_epoch = 15
-num_classes = 10
 img_rows, img_cols = 42, 28 # input image dimensions
 
 
@@ -19,11 +18,11 @@ class CNN(nn.Module):
 
     def __init__(self, input_dimension):
         super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=0)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=0)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=0)
+        self.conv2 = nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=0)
         self.flatten = Flatten()
-        self.fc1 = nn.Linear(64 * 9 * 5 , 128)
+        self.fc1 = nn.Linear(32 * 9 * 5, 128)
         self.dropout = nn.Dropout(p=0.5)
         self.o1 = nn.Linear(128, 10)
         self.o2 = nn.Linear(128, 10)
@@ -65,13 +64,13 @@ def main():
     model = CNN(input_dimension)
 
     # Train
-    train_model(train_batches, dev_batches, model)
+    train_model(train_batches, dev_batches, model, nesterov=False, n_epochs=nb_epoch)
 
     ## Evaluate the model on test data
     loss, acc = run_epoch(test_batches, model.eval(), None)
     print('Test loss1: {:.6f}  accuracy1: {:.6f}  loss2: {:.6f}   accuracy2: {:.6f}'.format(loss[0], acc[0], loss[1], acc[1]))
 
-    log = [(log, acc)]
+    log = [(loss, acc)]
     with open('test_log.pkl', 'wb') as f:
         pkl.dump(log, f)
 

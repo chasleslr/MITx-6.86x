@@ -38,10 +38,7 @@ def compute_accuracy(predictions, y):
 def train_model(train_data, dev_data, model, lr=0.01, momentum=0.9, nesterov=False, n_epochs=30):
     """Train a model for N epochs given data and hyper-params."""
     # optimize with SGD
-    #optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=nesterov)
-
-    # optimize with ADAM
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=nesterov)
 
     log = []
     for epoch in range(1, n_epochs + 1):

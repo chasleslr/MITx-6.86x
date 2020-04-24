@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-
+import pickle as pkl
 
 class Flatten(nn.Module):
     """A custom layer that views an input as 1D."""
@@ -37,9 +37,10 @@ def compute_accuracy(predictions, y):
 
 def train_model(train_data, dev_data, model, lr=0.01, momentum=0.9, nesterov=False, n_epochs=30):
     """Train a model for N epochs given data and hyper-params."""
-    # We optimize with SGD
+    # optimize with SGD
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum, nesterov=nesterov)
 
+    log = []
     for epoch in range(1, n_epochs + 1):
         print("-------------\nEpoch {}:\n".format(epoch))
 
@@ -53,6 +54,11 @@ def train_model(train_data, dev_data, model, lr=0.01, momentum=0.9, nesterov=Fal
 
         # Save model
         torch.save(model, 'mnist_model_fully_connected.pt')
+
+        # Log the results
+        log.append((loss, val_loss, acc, val_acc))
+        with open('training_log.pkl', 'wb') as f:
+            pkl.dump(log, f)
 
 
 def run_epoch(data, model, optimizer):

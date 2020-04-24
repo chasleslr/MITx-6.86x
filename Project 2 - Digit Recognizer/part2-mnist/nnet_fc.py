@@ -37,11 +37,11 @@ def main():
     test_batches = batchify_data(X_test, y_test, batch_size)
 
     #################################
-    ## Model specification TODO
+    ## Model specification
     model = nn.Sequential(
-              nn.Linear(784, 10),
+              nn.Linear(784, 128),
               nn.ReLU(),
-              nn.Linear(10, 10),
+              nn.Linear(128, 10),
             )
     lr=0.1
     momentum=0

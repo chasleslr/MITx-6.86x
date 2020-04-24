@@ -39,13 +39,20 @@ def main():
     train_batches = batchify_data(X_train, y_train, batch_size)
     dev_batches = batchify_data(X_dev, y_dev, batch_size)
     test_batches = batchify_data(X_test, y_test, batch_size)
-
+    print(train_batches[0]['x'].shape)
     #################################
-    ## Model specification TODO
+    ## Model specification
     model = nn.Sequential(
-              nn.Conv2d(1, 32, (3, 3)),
-              nn.ReLU(),
-              nn.MaxPool2d((2, 2)),
+                nn.Conv2d(1, 32, (3, 3)),
+                nn.ReLU(),
+                nn.MaxPool2d((2, 2)),
+                nn.Conv2d(32, 64, (3, 3)),
+                nn.ReLU(),
+                nn.MaxPool2d((2, 2)),
+                nn.Flatten(),
+                nn.Linear(1600, 128),
+                nn.Dropout(p=0.5),
+                nn.Linear(128, 10)
             )
     ##################################
 

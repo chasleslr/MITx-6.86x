@@ -79,7 +79,9 @@ def plot(X: np.ndarray, mixture: GaussianMixture, post: np.ndarray,
             mu[0], mu[1], sigma)
         ax.text(mu[0], mu[1], legend)
     plt.axis('equal')
+    plt.savefig('plots/' + title)
     plt.show()
+
 
 
 def rmse(X, Y):
@@ -98,4 +100,14 @@ def bic(X: np.ndarray, mixture: GaussianMixture,
     Returns:
         float: the BIC for this mixture
     """
-    raise NotImplementedError
+
+    k, d = mixture.mu.shape
+    var = mixture.var.shape[0]
+    p = mixture.var.shape[0]
+    n = X.shape[0]
+
+    n_params = (k * d) + var + p - 1
+
+    bic = log_likelihood - (n_params * np.log(n)) / 2
+
+    return bic

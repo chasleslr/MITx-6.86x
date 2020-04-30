@@ -123,9 +123,23 @@ for j, k in enumerate(K):
     bic[j] = current_bic
 
     print(f'K={k}', f'Best seed={best_seed}', f'logloss={logloss}', f'BIC={current_bic}')
-    #common.plot(X, mixture, post, title=f"EM, K={k}")
 
 best_K_ix = np.argmax(bic)
 best_K = K[best_K_ix]
 best_bic = bic[best_K_ix]
 print(f"Best K={best_K}", f"BIC={best_bic}")
+
+# -----------------------------------
+# EM Algorithm for Matrix Completion
+# -----------------------------------
+
+X_gold = np.loadtxt('netflix_complete.txt')
+
+X_pred = em.fill_matrix(X, mixture)
+
+rmse = common.rmse(X_gold, X_pred)
+
+print(f"RMSE= {rmse}")
+
+print(X)
+print(X_pred)
